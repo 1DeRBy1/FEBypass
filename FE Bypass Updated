@@ -1,0 +1,78 @@
+local InsertService = game:GetService("InsertService")
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
+
+local gui = Instance.new("ScreenGui")
+gui.Parent = game:GetService("CoreGui")
+gui.ResetOnSpawn = false
+
+local circleFrame = Instance.new("Frame", gui)
+
+circleFrame.Size = UDim2.new(0, 80, 0, 80)
+circleFrame.Position = UDim2.new(0, 10, 1, -90)
+circleFrame.AnchorPoint = Vector2.new(0, 1)
+circleFrame.BackgroundTransparency = 1
+
+local outline = Instance.new("Frame", circleFrame)
+outline.Size = UDim2.new(1, 4, 1, 4)
+outline.Position = UDim2.new(0, -2, 0, -2)
+outline.BackgroundColor3 = Color3.new(0, 0, 0)
+outline.ZIndex = 1
+
+local face = Instance.new("Frame", circleFrame)
+face.Size = UDim2.new(1, 0, 1, 0)
+face.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+face.ZIndex = 2
+
+local uiCorner = Instance.new("UICorner", face)
+uiCorner.CornerRadius = UDim.new(1, 0)
+
+local leftEye = Instance.new("Frame", face)
+leftEye.Size = UDim2.new(0.2, 0, 0.2, 0)
+leftEye.Position = UDim2.new(0.25, 0, 0.25, 0)
+leftEye.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+leftEye.ZIndex = 3
+
+local rightEye = Instance.new("Frame", face)
+rightEye.Size = UDim2.new(0.2, 0, 0.2, 0)
+rightEye.Position = UDim2.new(0.55, 0, 0.25, 0)
+rightEye.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+rightEye.ZIndex = 3
+
+local mouth = Instance.new("Frame", face)
+mouth.Size = UDim2.new(0.6, 0, 0.1, 0)
+mouth.Position = UDim2.new(0.2, 0, 0.7, 0)
+mouth.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+mouth.ZIndex = 3
+
+RunService.RenderStepped:Connect(function(delta)
+    face.Rotation = face.Rotation + (60 * delta)
+end)
+
+local function bypassFE()
+    workspace.FilteringEnabled = false
+    workspace.RespectFilteringEnabled = false
+end
+
+circleFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        bypassFE()
+    end
+end)
+
+local function insertAsset(assetId)
+    local success, model = pcall(function()
+        return InsertService:LoadAsset(assetId)
+    end)
+    
+    if success and model then
+        model.Parent = workspace
+        model:SetPrimaryPartCFrame(char.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0))
+    else
+        warn("Failed to load asset")
+    end
+end
+
+insertAsset(assetId)
